@@ -1,81 +1,48 @@
-const cheerio = require('cheerio')
-const axios = require('axios')
-const connection = require('./src/database/Connection')
+require('dotenv').config()
 
-//const BASE_URL = 'https://www.kabum.com.br/produto/111161/monitor-gamer-aoc-hero-w-led-27-widescreen-fhd-ips-hdmi-displayport-g-sync-compatible-144hz-1ms-altura-ajust-vel-27g2-bk'
-//const BASE_URL = 'https://www.kabum.com.br/produto/111160/monitor-gamer-aoc-hero-w-led-23-8-widescreen-fhd-ips-hdmi-displayport-freesync-144hz-1ms-altura-ajust-vel-24g2-bk'
-//const BASE_URL = 'https://www.kabum.com.br/cgi-local/site/produtos/descricao_ofertas.cgi?codigo=85196'
-const products = [
-    'https://www.kabum.com.br/produto/111161',
-    'https://www.kabum.com.br/produto/111160',
-    'https://www.kabum.com.br/produto/85197'
-]
+const Discord = require('discord.js')
+const { readdirSync } = require('fs')
+const Enmap = require('enmap')
+const client = new Discord.Client()
+const database = require('./src/database/Connection')
 
-async function getData(url) {
-    const page = await axios.request({
-        method: 'GET',
-        url,
-        responseType: 'arraybuffer',
-        responseEncoding: 'binary'
-    })
+client.commands = new Enmap()
+client.startTime = Date.now()
 
-    return page.data.toString('latin1');
-}
+database.connect()
 
-function processData(data) {
-    const scrapper = cheerio.load(data)
+const cmdFiles = readdirSync('./src/discord/commands/')
 
-    const root = scrapper('body')
+console.log('log', `Carregando o total de ${cmdFiles.length} comandos.`)
 
-    const productName = root.find('h1[class="titulo_det"]').text().trim()
-    console.log(productName)
+cmdFiles.forEach(f => {
+  try {
+    const props = require(`./src/discord/commands/${f}`)
+    if (f.split('.').slice(-1)[0] !== 'js') return
 
-    const normalPrice = root.find('div[class="preco_normal"]')
+    console.log('log', `Carregando comando: ${props.help.name}`)
 
-    if (normalPrice.length > 0) {
-        const price = normalPrice.text().trim()
-        const discountPrice = root.find('span[class="preco_desconto"]').find('span').find('span').find('strong').text().trim()
+    if (props.init) props.init(client)
 
-        console.log(`Preço: ${price}`)
-        console.log(`Boleto: ${discountPrice}`)
-    } else {
-        const discount = root.find('div[class="box-quantidades q1"]').text().trim()
-        const quantity = root.find('div[class="box-quantidades q2"]').text().trim()
-        const sold = root.find('div[class="box-quantidades q3"]').text().trim()
-
-        const oldPrice = root.find('div[class="preco_antigo-cm"]').text().trim().replace('De ', '').replace('por', '')
-        const price = root.find('div[class="preco_desconto-cm"]').find('span').find('strong').text().trim()
-        const discountPrice = root.find('span[class="preco_desconto_avista-cm"]').text().trim()
-
-        console.log(`Desconto: ${discount}`)
-        console.log(`Quantidade: ${quantity}`)
-        console.log(`Vendidos: ${sold}`)
-
-        console.log(`Preço Anterior: ${oldPrice}`)
-        console.log(`Preço: ${price}`)
-        console.log(`Boleto: ${discountPrice}`)
+    client.commands.set(props.help.name, props)
+    if (props.help.aliases) {
+      props.alias = true
+      props.help.aliases.forEach(alias => client.commands.set(alias, props))
     }
+  } catch (e) {
+    console.log(`Impossivel executar comando ${f}: ${e}`)
+  }
+})
 
-    console.log('')
-}
+const evtFiles = readdirSync('./src/discord/events/')
 
-async function search() {
-    products.forEach(product => {
-        getData(product).then((result) => {
-            processData(result)
-        })
-    })
-}
+console.log('log', `Carregando o total de ${evtFiles.length} eventos`)
 
-async function main() {
-    await connection.connect()
-    await search()
-    
-    setInterval(function () {
-        console.log(new Date().toISOString())
-        search()
-    }, 60000);
-}
+evtFiles.forEach(f => {
+  const eventName = f.split('.')[0]
+  const event = require(`./src/discord/events/${f}`)
 
-main()
+  client.on(eventName, event.bind(null, client))
+})
 
+client.login(process.env.DISCORD_TOKEN)

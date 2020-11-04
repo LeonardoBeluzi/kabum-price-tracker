@@ -7,9 +7,7 @@ module.exports = {
         return res.json(data)
     },
 
-    async indexedDB() {
-        const data = await Product.find({})
-
-        return res.json(data)   
+    async index(product_id) {
+        return await Product.findOne({ product_id: Number(product_id) }).lean().exec()            
     }
 }
