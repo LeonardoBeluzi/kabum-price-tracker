@@ -2,15 +2,36 @@ const mongoose = require('mongoose')
 
 const ProductSchema = new mongoose.Schema(
     {
-        id: {
+        product_id: {
             type: Number,
             required: true
         },
-        price: {
-            type: Number,
+
+        alias: {
+            type: String,
             required: true
-        }
+        },
+
+        history: [
+            {
+                created_at: {
+                    type: String,
+                    required: true
+                },
+        
+                original_price: {
+                    type: Number,
+                    required: true
+                },
+        
+                promotional_price: {
+                    type: Number,
+                    required: true
+                },
+            }
+        ]
     },
+
     {
         timestamps: true
     }
