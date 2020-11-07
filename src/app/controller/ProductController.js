@@ -28,6 +28,8 @@ module.exports = {
     },
 
     async storeHistory(data) {
+        console.log('Preparando para a inserção de dados')
+
         const product = await knex('products')
             .select('id')
             .where('external_id', data.external_id)
@@ -45,6 +47,8 @@ module.exports = {
 
         const insertedHistory = await knex('product_histories')
             .insert(parsedHistory)
+
+        console.log('Finalizando a inserção de dados')
 
         return insertedHistory[0]
     }
