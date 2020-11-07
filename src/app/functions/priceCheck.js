@@ -13,6 +13,7 @@ async function getProductData() {
 
 async function processData(data) {
     for (const item of data) {
+        console.log('----------')
         console.log(`Buscando dados do produto ${item.external_id}`)
 
         const data = await scrapper.getData(item.external_id)
@@ -42,6 +43,8 @@ async function processData(data) {
 module.exports = {
     async processProductList() {
         const data = await getProductData()
-        processData(data)
+        await processData(data)
+        console.log('----------')
+        console.log('Aguardando proxima rotina')
     }
 }
