@@ -13,6 +13,8 @@ async function getProductData() {
 
 async function processData(data) {
     data.forEach(async item => {
+        console.log(`Buscando dados do produto ${item.external_id}`)
+
         const data = await scrapper.getData(item.external_id)
         const processedData = scrapper.processData(data)
 
