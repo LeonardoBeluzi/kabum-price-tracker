@@ -13,25 +13,25 @@ async function getProductData() {
 
 async function processData(data) {
     data.forEach(async item => {
-        const data = await scrapper.getData(item.product_id)
+        const data = await scrapper.getData(item.external_id)
         const processedData = scrapper.processData(data)
 
         if (processedData) {
             var history = {
-                created_at: new Date().toLocaleString('pt-BR'),
-                original_price: 0,
-                promotional_price: 0
+                external_id: item.external_id,
+                price: 0,
+                discount_price: 0
             }
 
             if (processedData.status === 'out of stock') {
-                await ProductController.storeHistory(processedData.productId, history)
+                await ProductController.storeHistory(history)
             } else if (processedData.status === 'normal') {
-                history.original_price = processedData.price
-                await ProductController.storeHistory(processedData.productId, history)
+                history.price = processedData.price
+                await ProductController.storeHistory(history)
             } else if (processedData.status === 'offer') {
-                history.original_price = processedData.price
-                history.promotional_price = processedData.promotionalPrice
-                await ProductController.storeHistory(processedData.productId, history)
+                history.price = processedData.price
+                history.discount_price = processedData.promotionalPrice
+                await ProductController.storeHistory(history)
             }
         }
     })

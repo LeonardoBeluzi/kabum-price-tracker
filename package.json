@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "migrate": "knex --knexfile knexfile.js migrate:latest"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +17,8 @@
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
     "enmap": "^5.8.0",
-    "mongoose": "^5.10.11"
+    "knex": "^0.21.12",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

@@ -1,15 +1,12 @@
-const database = require('./src/database/Connection')
 const routine = require('./src/app/functions/priceCheck')
-
-
+require('dotenv').config()
 
 async function main() {
-    await database.connect()
     await routine.processProductList()
 
     setInterval(function () {
         routine.processProductList()
-    }, 60000);
+    }, 1000 * 60 * 30);
 }
 
 main()
