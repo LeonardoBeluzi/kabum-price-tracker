@@ -12,7 +12,7 @@ async function getProductData() {
 }
 
 async function processData(data) {
-    data.forEach(async item => {
+    for (const item of data) {
         console.log(`Buscando dados do produto ${item.external_id}`)
 
         const data = await scrapper.getData(item.external_id)
@@ -36,7 +36,7 @@ async function processData(data) {
                 await ProductController.storeHistory(history)
             }
         }
-    })
+    }
 }
 
 module.exports = {
