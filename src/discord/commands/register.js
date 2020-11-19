@@ -1,33 +1,18 @@
-const ProductController = require('../../app/controller/ProductController')
+const register = require('../functions/registerProduct')
 
 module.exports = {
     run: async (client, message, args) => {
         if (args.length === 0) {
-            return message.channel.send('Código do produto não informado')
+            return message.channel.send('Código do produto não informado.')
         }
 
-        if (args.length === 1) {
-            return message.channel.send('Apelido do produto não informado')
+        const product = await register.insertProduct(args[0])
+
+        if (product) {
+            return message.channel.send(`Produto "${product.name}" foi cadastrado.`)
         }
 
-        const alias = args.reduce((aliasString, arg) => {
-            aliasString + arg 
-        })
-
-        console.log(alias)
-
-        /*
-        console.log(args)
-        const data = await ProductController.store(args)
-
-        if (data) {
-            console.log(data.alias)
-            return message.channel.send(`subscribed to "${data.alias}"`)
-        } else {
-            return message.channel.send(`Produto não encontrado.`)  
-        }
-        */
-        return message.channel.send(`Produto cadastrado.`)
+        return message.channel.send(`Produto informado não existe.`)
     },
 
     conf: {},

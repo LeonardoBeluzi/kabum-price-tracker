@@ -67,11 +67,6 @@ module.exports = {
             }
         }
 
-        return {
-            status: 'out of stock',
-            productId,
-            productName,
-            price: 0
-        }
+        return null
     }
 }
