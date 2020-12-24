@@ -1,6 +1,6 @@
 const ProductController = require('../controller/ProductController')
 const NotificationController = require('../controller/NotificationController')
-const scrapper = require('./scrap')
+const kabum = require('../services/KabumService')
 
 async function getProductData() {
     const data = await ProductController.index()
@@ -16,33 +16,22 @@ async function processData(item) {
     console.log('----------')
     console.log(`Buscando dados do produto ${item.external_id}`)
 
-    const data = await scrapper.getData(item.external_id)
-    const processedData = scrapper.processData(data)
+    const data = await kabum.getProductData(item.external_id)
 
-    if (processedData) {
-        var history = {
-            id: item.id,
-            external_id: item.external_id,
-            price: 0,
-            discount_price: 0
-        }
+    if (!data) return null
 
-        if (processedData.status === 'normal') {
-            history.price = processedData.price
-            history.discount_price = processedData.price
+    const history = {
+        id: item.id,
+        external_id: data.external_id,
+        price: data.price,
+        discount_price: data.discount_price,
+        old_price: data.old_price,
+        discount_percentage: data.discount_percentage
+    }    
 
-            await ProductController.storeHistory(history)
-        } else if (processedData.status === 'offer') {
-            history.price = processedData.price
-            history.discount_price = processedData.promotionalPrice
-            
-            await ProductController.storeHistory(history)
-        }
+    await ProductController.storeHistory(history)
 
-        return await processNotification(history)
-    } else {
-        return []
-    }
+    return await processNotification(history)
 }
 
 async function processNotification(data) {

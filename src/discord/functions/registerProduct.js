@@ -1,5 +1,5 @@
 const ProductController = require('../../app/controller/ProductController')
-const api = require('./nameCheck')
+const kabum = require('../../app/services/KabumService')
 const parser = require('./urlParser')
 
 module.exports = {
@@ -16,26 +16,26 @@ module.exports = {
             id = parser.parseURL(id)
         }
 
-
         const product = await ProductController.show(id)
 
         if (product === undefined) {
-            const productName = await api.getName(id)
+            const productData = await kabum.getProductData(id)
 
-            if (!productName) {
+            if (!productData) {
                 return null
             }
 
             const parsedProduct = {
                 external_id: id,
-                name: productName
+                name: productData.name,
+                photo_url: productData.photo_url
             }
 
             const insetedId = await ProductController.store(parsedProduct)
 
             return {
                 id: insetedId,
-                name: productName
+                name: productData.name
             }
         }
 

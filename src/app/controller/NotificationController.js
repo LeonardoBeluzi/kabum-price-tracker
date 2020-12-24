@@ -47,6 +47,13 @@ module.exports = {
             .where('notifications.price', '>=', price)
     },
 
+    async delete(product_id, discord_user_id) {
+        return await knex('notifications')
+            .where('product_id', product_id)
+            .where('discord_user_id', discord_user_id)
+            .delete()
+    },
+
     async storeHistory(data) {
         const parsedHistory = {
             product_id: data.id,
