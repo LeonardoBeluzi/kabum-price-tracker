@@ -27,7 +27,7 @@ module.exports = {
                 name: response.data.nome,
                 photo_url: response.data.fotos[0],
                 price: response.data.preco,
-                old_price: response.data.preco_antigo,
+                old_price: response.data.preco_antigo === 0 ? response.data.preco : response.data.preco_antigo,
                 discount_price: response.data.preco_desconto,
                 discount_percentage: response.data.desconto  
             }
