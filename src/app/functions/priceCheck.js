@@ -27,7 +27,7 @@ async function processData(item) {
         discount_price: data.discount_price,
         old_price: data.old_price,
         discount_percentage: data.discount_percentage
-    }    
+    }
 
     await ProductController.storeHistory(history)
 
@@ -38,8 +38,12 @@ async function processNotification(data) {
     const notifications = await NotificationController.show(data.id, data.discount_price)
 
     return notifications.map(notification => {
+
+        if (notification.last_price === data.discount_price) return
+
         return {
-            id: data.external_id,
+            id: notification.id,
+            external_id: data.external_id,
             discord_user_id: notification.discord_user_id,
             name: notification.name,
             price: data.discount_price
@@ -61,8 +65,10 @@ module.exports = {
         responseArray.forEach(itemArray => {
             itemArray.forEach(item => {
                 response.push({
+                    id: item.id,
                     discord_user_id: item.discord_user_id,
-                    message: `O produto "${item.name}" está em promoção!\nR$ ${item.price}\nhttps://www.kabum.com.br/produto/${item.id}`
+                    message: `O produto "${item.name}" está em promoção!\nR$ ${item.price}\nhttps://www.kabum.com.br/produto/${item.external_id}`,
+                    price: item.price
                 })
             })
         })

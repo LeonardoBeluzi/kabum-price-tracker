@@ -40,7 +40,8 @@ module.exports = {
             .select(
                 'notifications.id',
                 'products.name',
-                'notifications.discord_user_id'
+                'notifications.discord_user_id',
+                'notifications.last_price'
             )
             .join('products', 'products.id', 'notifications.product_id')
             .where('notifications.product_id', product_id)
@@ -65,6 +66,14 @@ module.exports = {
             .insert(parsedHistory)
 
         return insertedHistory[0]
+    },
+
+    async updateLastPrice(id, price) {
+        await knex('notifications')
+            .update({
+                last_price: price
+            })
+            .where('id', id)
     }
 
 }
