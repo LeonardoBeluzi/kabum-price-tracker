@@ -37,16 +37,17 @@ async function processData(item) {
 async function processNotification(data) {
     const notifications = await NotificationController.show(data.id, data.discount_price)
 
-    return notifications.map(notification => {
-        if (notification.last_price !== data.discount_price) {
-            return {
-                id: notification.id,
-                external_id: data.external_id,
-                discord_user_id: notification.discord_user_id,
-                name: notification.name,
-                price: data.discount_price
-            }
-        }           
+    return notifications.filter(notification => {
+        return notification.last_price !== data.discount_price
+
+    }).map(notification => {
+        return {
+            id: notification.id,
+            external_id: data.external_id,
+            discord_user_id: notification.discord_user_id,
+            name: notification.name,
+            price: data.discount_price
+        }
     })
 }
 
@@ -59,7 +60,7 @@ module.exports = {
         })).then(response => {
             return response
         })
-
+        
         const response = []
         responseArray.forEach(itemArray => {
             itemArray.forEach(item => {
