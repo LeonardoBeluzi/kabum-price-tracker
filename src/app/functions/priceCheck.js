@@ -38,16 +38,15 @@ async function processNotification(data) {
     const notifications = await NotificationController.show(data.id, data.discount_price)
 
     return notifications.map(notification => {
-
-        if (notification.last_price === data.discount_price) return
-
-        return {
-            id: notification.id,
-            external_id: data.external_id,
-            discord_user_id: notification.discord_user_id,
-            name: notification.name,
-            price: data.discount_price
-        }
+        if (notification.last_price !== data.discount_price) {
+            return {
+                id: notification.id,
+                external_id: data.external_id,
+                discord_user_id: notification.discord_user_id,
+                name: notification.name,
+                price: data.discount_price
+            }
+        }           
     })
 }
 
