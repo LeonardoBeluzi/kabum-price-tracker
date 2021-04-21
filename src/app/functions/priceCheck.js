@@ -60,9 +60,11 @@ module.exports = {
         })).then(response => {
             return response
         })
-        
+
         const response = []
         responseArray.forEach(itemArray => {
+            if (!itemArray) return
+
             itemArray.forEach(item => {
                 response.push({
                     id: item.id,

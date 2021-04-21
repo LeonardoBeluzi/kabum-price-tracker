@@ -1,7 +1,7 @@
 module.exports = {
     async up(knex) {
         return knex.schema.table('products', table => {
-            table.string('photo_url').notNullable()
+            table.text('photo_url').notNullable()
         })
     },
     
