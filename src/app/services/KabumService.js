@@ -19,9 +19,6 @@ module.exports = {
                 headers: headers
             })
 
-            if (!response.data) return null
-            if (response.data.sucesso === false) return null
-
             return {
                 external_id: response.data.codigo,
                 name: response.data.nome,
@@ -33,7 +30,14 @@ module.exports = {
             }
             
         } catch (error) {
-            console.log(error)   
+            if (!response.data) {
+                if (response.data.sucesso === false) {
+                    console.log(`Produto ${product_id} não existe`)
+                }
+            } else {
+                console.log(error) 
+            }
+              
             return null
         }
     }
