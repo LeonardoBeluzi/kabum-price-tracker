@@ -20,7 +20,7 @@ module.exports = {
             })
 
             if (!response.data) return null
-            if (!response.data.sucesso === true) return null
+            if (response.data.sucesso === false) return null
 
             return {
                 external_id: response.data.codigo,
