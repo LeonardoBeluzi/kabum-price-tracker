@@ -30,8 +30,8 @@ module.exports = {
             }
             
         } catch (error) {
-            if (!response.data) {
-                if (response.data.sucesso === false) {
+            if (!error.data) {
+                if (error.data.sucesso === false) {
                     console.log(`Produto ${product_id} não existe`)
                 }
             } else {
