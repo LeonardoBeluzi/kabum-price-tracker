@@ -52,10 +52,7 @@ module.exports = {
 
             return insertedHistory[0]
         } else {    
-            if ((history.price !== parsedHistory.price) || 
-               (history.discount_price !== parsedHistory.discount_price) ||
-               (history.old_price !== parsedHistory.old_price) ||
-               (history.discount_percentage !== parsedHistory.discount_percentage)) {
+            if (parsedHistory.price < history.price) {
                 await knex('product_histories')
                     .update(parsedHistory)
                     .where('id', history.id)
