@@ -1,10 +1,10 @@
 require('dotenv').config()
 
-const Discord = require('discord.js')
+const { Client, Intents } = require('discord.js')
 const { readdirSync } = require('fs')
 const path = require('path')
 const Enmap = require('enmap')
-const client = new Discord.Client()
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_PRESENCES] })
 
 module.exports = {
     async start() {
