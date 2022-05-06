@@ -6,10 +6,5 @@ module.exports = async (client) => {
 
   console.log(`Eu estou online agora, meu nome é ${botName}. Há ${usersAmount} usuario(s) em ${guildsAmount} servidor(es)!`)
 
-  client.user.setPresence({
-    status: 'online',
-    activity: {
-      name: 'price checking 😎'
-    }
-  })
+  client.user.setActivity('price checking 😎')
 }
